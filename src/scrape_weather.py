@@ -132,8 +132,7 @@ def get_date(year, month, day):
     return '-'.join([str(year), str(month).zfill(2), str(day).zfill(2)])
 
 
-
-def get_weather(year, month):
+def _get_weather(year, month):
     '''
     scrape a particular page on wunderground.com which gives a table of daily
     weather data for a supplied month and year.
@@ -165,11 +164,11 @@ def get_weather(year, month):
         return None
 
 
-def get_weather_multiple_months(years, months=range(1, 13)):
+def get_weather(years, months=list(range(1, 13))):
     '''
-    collects weather data for multiple months and years. if multiple years
-    are supplied or no months are specified, the function will collect data
-    for the full year (ie all 12 months) of the supplied year(s).
+    collects weather data a specified set of months and years. if multiple
+    years are supplied or no months are specified, the function will collect
+    data for the full year (ie all 12 months) of the supplied year(s).
 
     Parameters
     ----------
@@ -184,11 +183,14 @@ def get_weather_multiple_months(years, months=range(1, 13)):
     df : pd.DataFrame
         the full table of data in pandas dataframe format
     '''
+    if type(months) != list:
+        months = [months]
+
     if type(years) != list:
         years = [years]
 
     if len(years) > 1:
-        months = range(1, 13)
+        months = list(range(1, 13))
 
     all_months = [(year, month) for year in years for month in months]
-    return pd.concat([get_weather(year, month) for year, month in all_months])
+    return pd.concat([_get_weather(year, month) for year, month in all_months])
